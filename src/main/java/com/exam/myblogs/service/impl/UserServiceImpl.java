@@ -9,16 +9,23 @@ import com.exam.myblogs.dto.response.UserResponse;
 import com.exam.myblogs.entity.User;
 import com.exam.myblogs.mapper.UserMapper;
 import com.exam.myblogs.service.UserService;
+import com.exam.myblogs.util.JwtUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
+    @Autowired
+    JwtUtils jwtUtils;
     //登录
     @Override
-    public UserResponse login(LoginRequest request) {
+    public UserResponse login(LoginRequest request, HttpServletResponse response) {
         // 查询用户
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getUsername, request.getUsername());
@@ -28,9 +35,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         lambdaQueryWrapper.eq(User::getPassword, password);
 
         User user = baseMapper.selectOne(lambdaQueryWrapper);
-        if (user == null) {
-            throw new RuntimeException("用户名或密码错误");
-        }
+        Assert.notNull(user, "用户账号或密码错误");
+
+        // 生成token
+        String jwt = jwtUtils.generateToken(user.getId());
+
+        //将token 放在我们的header里面
+        response.setHeader("Authorization", jwt);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
 
         return convertToResponse(user);
     }

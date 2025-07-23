@@ -10,6 +10,8 @@ import com.exam.myblogs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/myblog/user")
 public class UserController {
@@ -20,8 +22,8 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result<UserResponse> login(@RequestBody LoginRequest request) {
-        UserResponse user = userService.login(request);
+    public Result<UserResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+        UserResponse user = userService.login(request, response);
         return Result.success(user);
     }
 

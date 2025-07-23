@@ -41,4 +41,12 @@ public class Result<T> {
         result.setData(null);
         return result;
     }
+
+    public static <T> Result<T> error(Integer errorCode, String msg, T data) {
+        Result<T> result = new Result<>();
+        result.setErrorCode(errorCode);
+        result.setMsg(msg);
+        result.setData(null);
+        return result;
+    }
 }
