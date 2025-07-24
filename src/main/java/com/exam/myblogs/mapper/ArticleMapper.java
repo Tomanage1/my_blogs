@@ -2,6 +2,8 @@ package com.exam.myblogs.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.exam.myblogs.dto.request.ArticleCreateRequest;
+import com.exam.myblogs.dto.response.ArticleResponse;
 import com.exam.myblogs.entity.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +28,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
 
     // 根据文章ID查询文章详情（包含标签信息）
     Article selectArticleWithTagsById(Integer id);
+
+    Integer insertArticleWithCategory(Article article);
 }

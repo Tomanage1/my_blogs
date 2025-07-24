@@ -26,8 +26,8 @@ public class Comment implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @TableField("user_id")
-    private Integer userId;
+    @TableField("author_id")
+    private Integer authorId;
 
     @TableField("article_id")
     private Integer articleId;
@@ -40,7 +40,4 @@ public class Comment implements Serializable {
 
     @TableField("created_at")
     private LocalDateTime createdAt;
-
-    @TableField("updated_at")
-    private LocalDateTime updatedAt;
 }

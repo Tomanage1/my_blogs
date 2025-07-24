@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     public CommentResponse publishComment(CommentRequest request) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(request, comment);
-
+        comment.setId(request.getUserId());
         // 如果是回复评论，设置parentId
         if (request.getParentId() != null) {
             comment.setParentId(request.getParentId());
@@ -71,7 +72,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
         // 设置评论者信息
         CommentResponse.UserSimpleResponse author = new CommentResponse.UserSimpleResponse();
-        UserResponse user = userService.getUserById(comment.getUserId());
+        UserResponse user = userService.getUserById(comment.getAuthorId());
         if (user != null) {
             author.setId(user.getId());
             author.setNickname(user.getNickname());

@@ -8,9 +8,9 @@ import java.util.List;
 public class CommentResponse {
     private Integer id;
     private String content;
+    private Integer parentId;  //父类评论id
     private UserSimpleResponse author;
     private LocalDateTime createdAt;
-    private List<CommentResponse> replies; // 用于嵌套回复
 
     @Data
     public static class UserSimpleResponse {

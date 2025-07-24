@@ -12,7 +12,7 @@ public class ArticleResponse {
     private String summary;
     private UserSimpleResponse author;
     private List<String> tags;
-    private Integer views;
+    private Integer view;
     private String category;
     private String status;
     private LocalDateTime createdAt;

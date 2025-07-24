@@ -7,14 +7,24 @@
     <select id="selectCommentsByArticleId" resultType="com.exam.myblogs.entity.Comment">
         SELECT * FROM comment
         WHERE article_id = #{articleId}
-        AND parent_id = 0  <!-- 只查询顶级评论 -->
+        AND parent_id IS NULL  <!-- 只查询顶级评论 -->
         ORDER BY created_at DESC
     </select>
 
     <!-- 根据评论ID查询回复 -->
     <select id="selectRepliesByCommentId" resultType="com.exam.myblogs.entity.Comment">
-        SELECT * FROM comment
-        WHERE parent_id = #{commentId}
+        WITH RECURSIVE comment_tree AS (
+            SELECT *
+            FROM comment
+            WHERE parent_id = #{commentId}
+
+            UNION ALL
+
+            SELECT c.*
+            FROM comment c
+                     INNER JOIN comment_tree ct ON c.parent_id = ct.id
+        )
+        SELECT * FROM comment_tree
         ORDER BY created_at ASC
     </select>
 </mapper>

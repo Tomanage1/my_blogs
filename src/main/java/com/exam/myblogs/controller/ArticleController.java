@@ -5,6 +5,9 @@ import com.exam.myblogs.dto.response.ArticleListResponse;
 import com.exam.myblogs.dto.response.ArticleResponse;
 import com.exam.myblogs.dto.response.Result;
 import com.exam.myblogs.service.ArticleService;
+import com.exam.myblogs.shiro.AccountProfile;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,10 +72,11 @@ public class ArticleController {
      * 删除文章
      */
     @DeleteMapping("/article")
-    public Result<Boolean> deleteArticle(
-            @RequestParam Integer user_id,
-            @RequestParam Integer id) {
-        boolean result = articleService.deleteArticle(user_id, id);
+    public Result<Boolean> deleteArticle(@RequestParam Integer id) {
+        Subject subject = SecurityUtils.getSubject();
+        AccountProfile profile = (AccountProfile) subject.getPrincipal();
+
+        boolean result = articleService.deleteArticle(profile.getId(), id);
         return Result.success(result);
     }
 }

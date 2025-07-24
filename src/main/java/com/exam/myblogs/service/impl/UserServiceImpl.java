@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -72,8 +73,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     //更新用户信息
     @Override
-    public UserResponse updateUser(Integer userId, UserUpdateRequest request) {
-        User user = baseMapper.selectById(userId);
+    public UserResponse updateUser(UserUpdateRequest request) {
+        User user = baseMapper.selectById(request.getId());
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
@@ -81,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 更新用户信息
         user.setNickname(request.getNickname());
         user.setAvatar(request.getAvatar());
+        user.setUpdatedAt(LocalDateTime.now());
 
         baseMapper.updateById(user);
         return convertToResponse(user);

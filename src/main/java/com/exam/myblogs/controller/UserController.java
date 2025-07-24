@@ -40,9 +40,8 @@ public class UserController {
      * 更新用户信息
      */
     @PutMapping
-    public Result<UserResponse> updateUser(@RequestParam Integer userId,
-                                           @RequestBody UserUpdateRequest request) {
-        UserResponse user = userService.updateUser(userId, request);
+    public Result<UserResponse> updateUser(@RequestBody UserUpdateRequest request) {
+        UserResponse user = userService.updateUser(request);
         return Result.success(user);
     }
 

@@ -31,9 +31,18 @@
     </select>
 
     <!-- 根据文章ID查询文章详情（包含标签信息） -->
-    <select id="selectArticleWithTagsById" resultMap="ArticleDetailResultMap">
+    <select id="selectArticleWithTagsById" resultMap="ArticleDetailResultMap" useCache="false">
         SELECT
-        a.*,
+        a.id,
+        a.title,
+        a.content,
+        a.summary,
+        a.author_id,
+        a.category_id,
+        a.status,
+        a.view,
+        a.created_at,
+        a.updated_at,
         c.name AS category_name,
         COUNT(l.id) AS likes_count,
         t.name AS tag_name
@@ -43,7 +52,7 @@
         LEFT JOIN article_tag at ON a.id = at.article_id
         LEFT JOIN tag t ON at.tag_id = t.id
         WHERE a.id = #{id}
-        GROUP BY a.id, t.id  <!-- 确保每个标签只出现一次 -->
+        GROUP BY a.id, t.id<!-- 确保每个标签只出现一次 -->
     </select>
 
     <!-- 基础结果映射 -->
@@ -53,8 +62,9 @@
         <result property="content" column="content"/>
         <result property="summary" column="summary"/>
         <result property="authorId" column="author_id"/>
+        <result property="categoryId" column="category_id"/>
         <result property="status" column="status"/>
-        <result property="view" column="view"/>  <!-- 直接映射articles表的view字段 -->
+        <result property="view" column="view"/>  <!-- 直接映射article表的view字段 -->
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
 
@@ -70,8 +80,45 @@
     <!-- 详细结果映射（包含标签） -->
     <resultMap id="ArticleDetailResultMap" type="com.exam.myblogs.entity.Article" extends="ArticleBaseResultMap">
         <!-- 集合映射标签 -->
+
         <collection property="tags" ofType="java.lang.String">
             <result property="name" column="tag_name"/>
         </collection>
     </resultMap>
+
+    <!--在使用insertArticleWithCategory方法时，MyBatis 会先执行 SELECT 查询获取 category_id，然后将其赋值给请求对象的 categoryId 属性，再执行 INSERT 语句。-->
+<!--    实现了从 category 名称到 category_id 的自动转换。-->
+    <select id="selectCategoryIdByName" resultType="java.lang.Integer">
+        SELECT id FROM category WHERE name = #{categoryName}
+    </select>
+
+    <!-- 插入文章 -->
+    <insert id="insertArticle" parameterType="com.exam.myblogs.entity.Article">
+        INSERT INTO article
+        (title, content, summary, author_id, category_id, status, view, created_at, updated_at)
+        VALUES
+            (#{title}, #{content}, #{summary}, #{authorId},
+             #{categoryId, jdbcType=VARCHAR}, #{status}, 0,
+             #{createdAt, jdbcType=TIMESTAMP}, #{updatedAt, jdbcType=TIMESTAMP})
+    </insert>
+
+    <!-- 插入文章(带分类名称到ID转换) -->
+<!--    如果你在 <insert> 中使用了 <selectKey>，那么 useGeneratedKeys + keyProperty 就会失效。-->
+<!--    MyBatis 在解析 <selectKey> 时，会为每个 <selectKey> 生成一个唯一的 key generator，但如果你没有指定 id，它会默认使用 insertId + "!selectKey" 作为 key，导致重复冲突。-->
+<!--    合并sql语句-->
+    <insert id="insertArticleWithCategory" parameterType="com.exam.myblogs.entity.Article">
+<!--            useGeneratedKeys="true"-->
+<!--            keyProperty="id">-->
+        INSERT INTO article
+        (title, content, summary, author_id, category_id, status, view, created_at, updated_at)
+        VALUES
+        (#{title}, #{content}, #{summary}, #{authorId},
+        (SELECT id FROM category WHERE name = #{category}),
+        #{status}, 0,
+        #{createdAt, jdbcType=TIMESTAMP}, #{updatedAt, jdbcType=TIMESTAMP})
+        <!-- 获取自增主键 -->
+        <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 </mapper>

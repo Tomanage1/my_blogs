@@ -1,7 +1,6 @@
 package com.exam.myblogs.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -75,7 +74,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         BeanUtils.copyProperties(request, article);
         article.setAuthorId(request.getAuthorId());
 
-        baseMapper.insert(article);
+        baseMapper.insertArticleWithCategory(article);
 
         // 处理标签
         handleArticleTags(article.getId(), request.getTags());
@@ -87,6 +86,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ArticleResponse getArticleById(Integer id) {
         Article article = baseMapper.selectArticleWithTagsById(id);
+
         if (article == null) {
             return null;
         }
@@ -94,7 +94,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return convertToResponse(article);
     }
 
-    // 搜索文章
+    /**
+     * 根据文章标题搜索文章，并返回分页结果
+     *
+     * @param search 搜索关键词，用于匹配文章标题
+     * @param page 当前页码
+     * @param perPage 每页显示的文章数量
+     * @return 返回包含文章列表和分页信息的响应对象
+     */
     @Override
     public ArticleListResponse searchArticlesByTitle(String search, Integer page, Integer perPage) {
         IPage<Article> articlePage = new Page<>(page, perPage);
@@ -211,7 +218,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         //完成不同类中meta的类型转换，并且手动赋值
         ArticleResponse.Meta meta = new ArticleResponse.Meta();
         BeanUtils.copyProperties(article.getMeta(), meta);
-        response.setViews(article.getView());
+        response.setView(article.getView());
         response.setMeta(meta);
 
         // 设置作者信息

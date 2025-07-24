@@ -24,7 +24,7 @@ public interface UserService extends IService<User> {
     /**
      * 更新用户信息
      */
-    UserResponse updateUser(Integer userId, UserUpdateRequest request);
+    UserResponse updateUser(UserUpdateRequest request);
 
     /**
      * 根据ID获取用户信息

@@ -39,8 +39,8 @@ public class Article implements Serializable {
     @TableField("author_id")
     private Integer authorId;
 
-    @TableField("category")
-    private String category;
+    @TableField("category_id")
+    private Integer categoryId;
 
     @TableField("status")
     private Integer status; // 0-草稿，1-已发布
@@ -53,6 +53,9 @@ public class Article implements Serializable {
 
     @TableField("updated_at")
     private LocalDateTime updatedAt;
+
+    @TableField(exist = false)
+    private String category;
 
     // 非数据库字段，用于存储标签
     @TableField(exist = false)
