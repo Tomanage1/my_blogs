@@ -1,5 +1,6 @@
 package com.exam.myblogs.dto.response;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;

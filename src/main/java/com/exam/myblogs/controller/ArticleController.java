@@ -6,11 +6,14 @@ import com.exam.myblogs.dto.response.ArticleResponse;
 import com.exam.myblogs.dto.response.Result;
 import com.exam.myblogs.service.ArticleService;
 import com.exam.myblogs.shiro.AccountProfile;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Api(value = "文章Controller", tags = {"文章接口"})
 @RestController
 @RequestMapping("/myblog")
 public class ArticleController {
@@ -20,6 +23,7 @@ public class ArticleController {
     /**
      * 获取文章列表
      */
+    @ApiOperation(value = "获取文章列表", tags = {"文章接口"})
     @GetMapping("/articles")
     public Result<ArticleListResponse> getArticleList(
             @RequestParam(defaultValue = "1") Integer page,
@@ -42,6 +46,7 @@ public class ArticleController {
     /**
      * 创建文章
      */
+    @ApiOperation(value = "创建文章", tags = {"文章接口"})
     @PostMapping("/article/creat")
     public Result<ArticleResponse> createArticle(@RequestBody ArticleCreateRequest request) {
         ArticleResponse article = articleService.createArticle(request);
@@ -51,6 +56,7 @@ public class ArticleController {
     /**
      * 根据ID获取文章详情
      */
+    @ApiOperation(value = "获取文章详情", tags = {"文章接口"})
     @GetMapping("/article/{id}")
     public Result<ArticleResponse> getArticleById(@PathVariable Integer id) {
         ArticleResponse article = articleService.getArticleById(id);
@@ -60,9 +66,10 @@ public class ArticleController {
     /**
      * 更新文章
      */
+    @ApiOperation(value = "更新文章", tags = {"文章接口"})
     @PutMapping("/article")
     public Result<ArticleResponse> updateArticle(
-            @RequestParam Integer id,
+            @RequestParam Integer id,//文章id
             @RequestBody ArticleCreateRequest request) {
         ArticleResponse article = articleService.updateArticle(id, request);
         return Result.success(article);
@@ -71,6 +78,7 @@ public class ArticleController {
     /**
      * 删除文章
      */
+    @ApiOperation(value = "删除文章", tags = {"文章接口"})
     @DeleteMapping("/article")
     public Result<Boolean> deleteArticle(@RequestParam Integer id) {
         Subject subject = SecurityUtils.getSubject();

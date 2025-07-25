@@ -1,9 +1,11 @@
 package com.exam.myblogs.dto.request;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@ApiModel(value = "创建文章参数")
 @Data
 public class ArticleCreateRequest {
     private Integer authorId;

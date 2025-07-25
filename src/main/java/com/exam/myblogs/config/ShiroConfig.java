@@ -91,8 +91,19 @@ public class ShiroConfig {
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         Map<String, String> filterMap = new LinkedHashMap<>();
+        // 放行 Swagger 相关路径
+//        filterMap.put("/swagger-ui.html", "anon");
+//        filterMap.put("/swagger/**", "anon");
+//        filterMap.put("/swagger-resources/**", "anon");
+//        filterMap.put("/v2/**", "anon");
+//        filterMap.put("/webjars/**", "anon");
+//        filterMap.put("/configuration/**", "anon");
+//        filterMap.put("/doc.html","anon");
+//        filterMap.put("data:image/**", "anon");
+//          都不行，不知道为什么
         // 所有请求都经过 jwt 过滤器
-        filterMap.put("/**","jwt");
+//        filterMap.put("/**","jwt");
+        filterMap.put("/myblog/**","jwt");
 
         chainDefinition.addPathDefinitions(filterMap);
         return chainDefinition;

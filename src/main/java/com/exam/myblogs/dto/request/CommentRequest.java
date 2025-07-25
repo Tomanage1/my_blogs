@@ -1,8 +1,11 @@
 package com.exam.myblogs.dto.request;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+
+@ApiModel(value = "评论请求参数")
 @Data
 public class CommentRequest {
     private Integer userId;
