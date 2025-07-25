@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.exam.myblogs.entity.User;
 import com.exam.myblogs.service.UserService;
 import com.exam.myblogs.util.JwtUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;

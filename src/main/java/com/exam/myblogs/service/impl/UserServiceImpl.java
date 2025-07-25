@@ -12,6 +12,8 @@ import com.exam.myblogs.service.UserService;
 import com.exam.myblogs.util.JwtUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.DigestUtils;
@@ -71,6 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return convertToResponse(user);
     }
 
+    @CachePut(value = "user", key = "#request.id")
     //更新用户信息
     @Override
     public UserResponse updateUser(UserUpdateRequest request) {
@@ -88,6 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return convertToResponse(user);
     }
 
+    @Cacheable(value = "user", key = "#id")
     @Override
     public UserResponse getUserById(Integer id) {
         User user = baseMapper.selectById(id);

@@ -18,6 +18,9 @@ import com.exam.myblogs.service.ArticleService;
 import com.exam.myblogs.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private UserService userService;
 
     // 获取文章列表
+    @Cacheable(value = "articleListResponse", key = "#page+'-'+#perPage+'-'+#sort+'-'+#order+'-'+#search")
     @Override
     public ArticleListResponse getArticleList(Integer page, Integer perPage, String sort, String order) {
         // 创建分页对象，指定当前页码和每页记录数
@@ -83,6 +87,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     // 获取文章详情
+    @Cacheable(value = "articleResponse", key = "#id")
     @Override
     public ArticleResponse getArticleById(Integer id) {
         Article article = baseMapper.selectArticleWithTagsById(id);
@@ -102,6 +107,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @param perPage 每页显示的文章数量
      * @return 返回包含文章列表和分页信息的响应对象
      */
+    @Cacheable(value = "articleListResponse", key = "#search+'-'+#page+'-'+#perPage")
     @Override
     public ArticleListResponse searchArticlesByTitle(String search, Integer page, Integer perPage) {
         IPage<Article> articlePage = new Page<>(page, perPage);
@@ -124,6 +130,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return response;
     }
 
+    @CachePut(value = "articleResponse", key = "#id")
     // 更新文章
     @Transactional
     @Override
@@ -156,6 +163,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         return getArticleById(id);
     }
 
+    @CacheEvict(value = "articleResponse", key = "#id")
     @Override
     public boolean deleteArticle(Integer userId, Integer articleId) {
         Article article = baseMapper.selectById(articleId);

@@ -12,6 +12,7 @@ import com.exam.myblogs.service.CommentService;
 import com.exam.myblogs.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,6 +43,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         return convertToResponse(comment);
     }
 
+    @Cacheable(value = "comments", key = "#articleId")
     // 获取文章的评论
     @Override
     public List<CommentResponse> getCommentsByArticleId(Integer articleId, Integer page, Integer perPage) {
@@ -54,6 +56,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     // 获取评论的回复
+    @Cacheable(value = "replies", key = "#commentId")
     @Override
     public List<CommentResponse> getRepliesByCommentId(Integer commentId) {
         List<Comment> replies = baseMapper.selectRepliesByCommentId(commentId);

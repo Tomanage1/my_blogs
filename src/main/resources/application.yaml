@@ -10,6 +10,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  redis:
+    host: 127.0.0.1
+    port: 6379
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
@@ -21,3 +24,8 @@ tomanage:
     # token有效时长，7天，单位秒
     expire: 604800
     header: token
+
+shiro-redis:
+  enable: true
+  redis-manager:
+    host: 127.0.0.1:6379

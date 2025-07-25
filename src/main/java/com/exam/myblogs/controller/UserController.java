@@ -28,6 +28,7 @@ public class UserController {
     @PostMapping("/login")
     public Result<UserResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         UserResponse user = userService.login(request, response);
+
         return Result.success(user);
     }
 
